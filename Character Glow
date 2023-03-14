@@ -1,0 +1,125 @@
+-- Hello fellow github viewer! This is open source so you can copy this. Made by Yemanica#0001
+local plr = game.Players.LocalPlayer
+local crctrglow = Instance.new("ScreenGui")
+local mainframe = Instance.new("Frame")
+local topbar = Instance.new("Frame")
+local title = Instance.new("TextLabel")
+local close = Instance.new("TextButton")
+local switchframe = Instance.new("Frame")
+local switch = Instance.new("TextButton")
+
+local UIS = game:GetService('UserInputService')
+local frame = mainframe
+local dragToggle = nil
+local dragSpeed = 0.25
+local dragStart = nil
+local startPos = nil
+
+local function updateInput(input)
+	local delta = input.Position - dragStart
+	local position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X,
+		startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+	game:GetService('TweenService'):Create(frame, TweenInfo.new(dragSpeed), {Position = position}):Play()
+end
+
+frame.InputBegan:Connect(function(input)
+	if (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) then 
+		dragToggle = true
+		dragStart = input.Position
+		startPos = frame.Position
+		input.Changed:Connect(function()
+			if input.UserInputState == Enum.UserInputState.End then
+				dragToggle = false
+			end
+		end)
+	end
+end)
+
+UIS.InputChanged:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+		if dragToggle then
+			updateInput(input)
+		end
+	end
+end)
+
+
+crctrglow.Name = "crctrglow"
+crctrglow.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+crctrglow.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+mainframe.Name = "mainframe"
+mainframe.Parent = crctrglow
+mainframe.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+mainframe.Position = UDim2.new(0.182038844, 0, 0.31669867, 0)
+mainframe.Size = UDim2.new(0, 154, 0, 152)
+
+topbar.Name = "topbar"
+topbar.Parent = mainframe
+topbar.BackgroundColor3 = Color3.fromRGB(0, 184, 184)
+topbar.Size = UDim2.new(0, 154, 0, 22)
+
+title.Name = "title"
+title.Parent = topbar
+title.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+title.BackgroundTransparency = 1.000
+title.Size = UDim2.new(0, 126, 0, 22)
+title.Font = Enum.Font.SourceSans
+title.Text = " Character Glow"
+title.TextColor3 = Color3.fromRGB(0, 0, 0)
+title.TextSize = 14.000
+title.TextXAlignment = Enum.TextXAlignment.Left
+
+close.Name = "close"
+close.Parent = topbar
+close.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+close.BackgroundTransparency = 1.000
+close.Position = UDim2.new(0.818181813, 0, 0, 0)
+close.Size = UDim2.new(0, 28, 0, 22)
+close.Font = Enum.Font.SourceSans
+close.Text = "X"
+close.TextColor3 = Color3.fromRGB(0, 0, 0)
+close.TextSize = 14.000
+
+switchframe.Name = "switchframe"
+switchframe.Parent = mainframe
+switchframe.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+switchframe.Position = UDim2.new(0, 0, 0.144736841, 0)
+switchframe.Size = UDim2.new(0, 154, 0, 130)
+
+switch.Name = "switch"
+switch.Parent = switchframe
+switch.BackgroundColor3 = Color3.fromRGB(165, 10, 13)
+switch.Position = UDim2.new(0.27922076, 0, 0.238461539, 0)
+switch.Size = UDim2.new(0, 68, 0, 68)
+switch.Font = Enum.Font.SourceSans
+switch.Text = "Off"
+switch.TextColor3 = Color3.fromRGB(255, 255, 255)
+switch.TextSize = 14.000
+
+close.MouseButton1Click:Connect(function()
+	plr.PlayerGui.crctrglow:Destroy()
+end)
+
+local status = 0
+local pointlight = Instance.new("PointLight")
+switch.MouseButton1Click:Connect(function()
+	if status == 0 then
+		pointlight.Parent = plr.Character:FindFirstChild("HumanoidRootPart")
+		pointlight.Brightness = 1
+		pointlight.Range = 30
+		switch.BackgroundColor3 = Color3.fromRGB(0.164706, 0.415686, 0)
+		switch.Text = "On"
+		status = 1
+	elseif status == 1 then
+		pointlight.Enabled = false
+		switch.BackgroundColor3 = Color3.fromRGB(165, 10, 13)
+		switch.Text = "Off"
+		status = 2
+	elseif status == 2 then
+		pointlight.Enabled = true
+		switch.BackgroundColor3 = Color3.fromRGB(12, 91, 0)
+		switch.Text = "On"
+		status = 1
+	end
+end)
